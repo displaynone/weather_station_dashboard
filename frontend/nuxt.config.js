@@ -69,4 +69,7 @@ module.exports = {
 		 */
 		// extend(config, ctx) {}
 	},
+	env: {
+		apiServer: process.env.API_SERVER,
+	}
 }

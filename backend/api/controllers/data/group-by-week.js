@@ -68,7 +68,7 @@ module.exports = {
 		const currentDate = new Date( year, month - 1, day );
 		const startDate = setToMonday( new Date( currentDate ) ).getTime();
 		const endDate = setToSunday( new Date( currentDate ) ).getTime();
-		const query = 'select createdAt, DAYOFWEEK( FROM_UNIXTIME( createdAt / 1000 ) ) as day_of_week, `id`, `temperature`, `humidity`, `pressure` from `data` where `createdAt` >= $1 and `createdAt` <= $2 order by 1';
+		const query = 'select createdAt, WEEKDAY( FROM_UNIXTIME( createdAt / 1000 ) ) as day_of_week, `id`, `temperature`, `humidity`, `pressure` from `data` where `createdAt` >= $1 and `createdAt` <= $2 order by 1';
 		const result = await sails.getDatastore().sendNativeQuery( query, [ startDate, endDate ] );
 		if ( ! average ) {
 			return result.rows;

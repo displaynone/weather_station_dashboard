@@ -79,9 +79,9 @@ export default {
 		}
 	},
 	async fetch() {
-		const today = new Date(2021, 1, 10);
+		const today = new Date();
 		const todayData = await this.$axios.$get(
-			this.$config.apiServer + `data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() }&year=${ today.getFullYear() }&average=true`
+			process.env.apiServer + `data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() }&year=${ today.getFullYear() }&average=true`
 		);
 		const emptyArray = ( new Array( 24 ) ).fill( 0 );
 		this.temperature = [ ... emptyArray ];

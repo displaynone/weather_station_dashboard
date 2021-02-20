@@ -97,11 +97,6 @@ module.exports.models = {
 	 *																																						 *
 	 ******************************************************************************/
 
-	dataEncryptionKeys: {
-		default: 'sIMdXBwLz0PRyeFIj3jteM7EqV7LHYadw7WSwcMMKO4='
-	},
-
-
 	/***************************************************************************
 	 *																																					*
 	 * Whether or not implicit records for associations should be cleaned up		*

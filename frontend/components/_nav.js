@@ -7,7 +7,7 @@ export default [{
 			to: '/resumen',
 			icon: 'cil-cloudy',
 		},
-/*
+		/*
 		{
 			_name: 'CSidebarNavItem',
 			name: 'Dashboard',
@@ -249,6 +249,6 @@ export default [{
 			_class: 'bg-danger text-white',
 			target: '_blank'
 		}
-*/
+		*/
 	]
 }]
