@@ -57,8 +57,6 @@ module.exports = {
 
 				const average = item
 					.reduce( ( itemA, itemB ) => {
-						sails.log({...itemA});
-						sails.log({...itemB});
 						return {
 							... itemA,
 							temperature: itemA.temperature + itemB.temperature,

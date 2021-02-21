@@ -43,7 +43,7 @@ module.exports = {
 		 * @return {Date}
 		 */
 		const setToMonday = date => {
-			let dayOfWeek = date.getDay() || 7;
+			let dayOfWeek = ( date.getDay() + 6 ) % 7 || 7;
 			if ( dayOfWeek !== 1 ) {
 				date.setHours( -24 * ( dayOfWeek - 1 ) );
 			}
@@ -57,10 +57,9 @@ module.exports = {
 		 * @return {Date}
 		 */
 		const setToSunday = date => {
-			let dayOfWeek = date.getDay() || 7;
+			let dayOfWeek = ( date.getDay() + 6 ) % 7 || 7;
 			if ( dayOfWeek !== 0 ) {
 				date.setHours( 24 * ( 6 - ( dayOfWeek - 1 ) ) );
-				sails.log( 24 * ( 6 - dayOfWeek - 1 ) );
 			}
 			return date;
 		};
