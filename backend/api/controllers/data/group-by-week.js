@@ -43,8 +43,8 @@ module.exports = {
 		 * @return {Date}
 		 */
 		const setToMonday = date => {
-			let dayOfWeek = ( date.getDay() + 6 ) % 7 || 7;
-			if ( dayOfWeek !== 1 ) {
+			let dayOfWeek = ( date.getDay() + 6 ) % 7;
+			if ( dayOfWeek !== 0 ) {
 				date.setHours( -24 * ( dayOfWeek - 1 ) );
 			}
 			return date;
@@ -57,14 +57,15 @@ module.exports = {
 		 * @return {Date}
 		 */
 		const setToSunday = date => {
-			let dayOfWeek = ( date.getDay() + 6 ) % 7 || 7;
-			if ( dayOfWeek !== 0 ) {
+			let dayOfWeek = ( date.getDay() + 6 ) % 7;
+			if ( dayOfWeek !== 6 ) {
 				date.setHours( 24 * ( 6 - ( dayOfWeek - 1 ) ) );
 			}
 			return date;
 		};
 
-		const currentDate = new Date( year, month - 1, day );
+		const currentDate = new Date( year, month - 1, day, 0, 0, 0 );
+		currentDate.setTime( currentDate.getTime() - ( currentDate.getTimezoneOffset() * 60 * 1000 ) );
 		const startDate = setToMonday( new Date( currentDate ) ).getTime();
 		const endDate = setToSunday( new Date( currentDate ) ).getTime();
 		const query = 'select createdAt, WEEKDAY( FROM_UNIXTIME( createdAt / 1000 ) ) as day_of_week, `id`, `temperature`, `humidity`, `pressure` from `data` where `createdAt` >= $1 and `createdAt` <= $2 order by 1';
