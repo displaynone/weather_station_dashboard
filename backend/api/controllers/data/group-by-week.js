@@ -1,3 +1,5 @@
+const moment = require( 'moment' );
+
 module.exports = {
 
 
@@ -37,39 +39,20 @@ module.exports = {
 
 	fn: async function ( { day, month, year, average } ) {
 		/**
-		 * Get the Monday of the week for a current date.
+		 * Gets the timestamp using the timezone
 		 *
-		 * @param {Date} date Current date
-		 * @return {Date}
+		 * @param {Moment} date Date
+		 * @return {int}
 		 */
-		const setToMonday = date => {
-			let dayOfWeek = ( date.getDay() + 6 ) % 7;
-			if ( dayOfWeek !== 0 ) {
-				date.setHours( -24 * ( dayOfWeek - 1 ) );
-			}
-			return date;
+		const getTimestamp = date => {
+			return date.valueOf() + ( date.utcOffset() * 60 * 1000 );
 		};
 
-		/**
-		 * Get the Sunday of the week for a current date.
-		 *
-		 * @param {Date} date Current date
-		 * @return {Date}
-		 */
-		const setToSunday = date => {
-			let dayOfWeek = ( date.getDay() + 6 ) % 7;
-			if ( dayOfWeek !== 6 ) {
-				date.setHours( 24 * ( 6 - ( dayOfWeek - 1 ) ) );
-			}
-			return date;
-		};
-
-		const currentDate = new Date( year, month - 1, day, 0, 0, 0 );
-		currentDate.setTime( currentDate.getTime() - ( currentDate.getTimezoneOffset() * 60 * 1000 ) );
-		const startDate = setToMonday( new Date( currentDate ) ).getTime();
-		const endDate = setToSunday( new Date( currentDate ) ).getTime();
+		const currentDate = moment([year, month - 1, day]).local(true).hour(0).minutes(0).seconds(0);
+		const startDate = currentDate.clone().weekday(1);
+		const endDate = currentDate.clone().weekday(7);
 		const query = 'select createdAt, WEEKDAY( FROM_UNIXTIME( createdAt / 1000 ) ) as day_of_week, `id`, `temperature`, `humidity`, `pressure` from `data` where `createdAt` >= $1 and `createdAt` <= $2 order by 1';
-		const result = await sails.getDatastore().sendNativeQuery( query, [ startDate, endDate ] );
+		const result = await sails.getDatastore().sendNativeQuery( query, [ getTimestamp( startDate ), getTimestamp( endDate ) ] );
 		if ( ! average ) {
 			return result.rows;
 		}

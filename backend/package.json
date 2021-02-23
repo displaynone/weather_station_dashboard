@@ -9,6 +9,7 @@
     "@coreui/vue": "^3.2.7",
     "@sailshq/lodash": "^3.10.3",
     "dotenv": "^8.2.0",
+    "moment": "^2.29.1",
     "sails": "^1.4.0",
     "sails-hook-orm": "^3.0.1",
     "sails-hook-sockets": "^2.0.0",
