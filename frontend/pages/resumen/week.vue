@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<h2>Esta semana</h2>
-		<CRow>
-			<CCol sm="1" v-for="( day, index ) in data" :key="index">
+		<CRow class="row">
+			<CCol class="col day" v-for="( day, index ) in data" :key="index">
 				<CCard
 					color="primary"
 					class="text-center"
@@ -10,7 +10,7 @@
 					text-color="white"
 				>
 					<blockquote class="card-blockquote">
-						<div class="h2">{{ day.day }} {{ daysLabels[ index ] }}</div>
+						<div class="h5">{{ day.day }} {{ daysLabels[ index ] }}</div>
 						<div><CIcon :height="10" name="cilCaretTop"/> {{ day.maxTemperature  === Number.MIN_SAFE_INTEGER ? '-' : `${ day.maxTemperature } ºC` }}</div>
 						<div><CIcon :height="10" name="cilCaretBottom"/> {{ day.minTemperature  === Number.MAX_SAFE_INTEGER ? '-' : `${ day.minTemperature } ºC` }}</div>
 					</blockquote>
@@ -74,9 +74,18 @@ export default {
 </script>
 
 <style scoped>
-	.col-sm-1 {
-		max-width: calc(100%/7);
-		flex: 0 0 calc(100%/7);
+	@media (max-width: 768px) {
+		.day {
+			min-width: calc( 100% / 3);
+			max-width: calc( 100% / 3);
+		}
+	}
+
+	@media (min-width: 786px) and (max-width: 992px) {
+		.day {
+			min-width: calc( 100% / 4);
+			max-width: calc( 100% / 4);
+		}
 	}
 
 	.card-body {

@@ -2,7 +2,7 @@
 	<div class="c-app">
 		<TheSidebar/>
 		<CWrapper>
-			<!--TheHeader/ -->
+			<TheHeader/>
 			<div class="c-body">
 				<main class="c-main">
 					<CContainer fluid>
@@ -19,14 +19,14 @@
 
 <script>
 import TheSidebar from './TheSidebar'
-// import TheHeader from './TheHeader'
+import TheHeader from './TheHeader'
 // import TheFooter from './TheFooter'
 
 export default {
 	name: 'TheContainer',
 	components: {
 		TheSidebar,
-		// TheHeader,
+		TheHeader,
 		// TheFooter
 	}
 }
