@@ -26,7 +26,7 @@ export default {
 		},
 		label: {
 			type: String,
-			default: 'Sales'
+			default: ''
 		},
 		pointed: Boolean
 	},

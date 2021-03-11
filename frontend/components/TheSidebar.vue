@@ -21,7 +21,6 @@
 				transform="translate(0 -1020.4)"
 				/>
 			</svg>
-			<h1>El Tiempo</h1>
 		</CSidebarBrand>
 
 		<CRenderFunction
