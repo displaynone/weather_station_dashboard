@@ -7,10 +7,10 @@
 						<TemperatureIcon class="icon"/>
 					</template>
 					<template #footer>
-						<CChartBarSimple
+						<CChartBarExpert
 							pointed
 							class="mt-3 mx-3"
-							:data-points="temperature"
+							:data-points="temperatureDatasets"
 							point-hover-background-color="primary"
 							label="ºC"
 							:labels="hoursLabels"
@@ -97,14 +97,16 @@
 
 <script>
 import { TemperatureIcon, HumidityIcon, PressureIcon, RainHeavyIcon, RainModerateIcon, SunnyIcon } from '~/components/icons';
-import { CChartBarSimple } from "../charts/index.js";
+import { CChartBarSimple, CChartBarExpert } from "../charts/index.js";
+import { getColor } from '@coreui/utils/src'
 
 export default {
 	name: "DailyWidgets",
-	components: { CChartBarSimple, TemperatureIcon, HumidityIcon, PressureIcon, RainHeavyIcon, RainModerateIcon, SunnyIcon },
+	components: { CChartBarSimple, CChartBarExpert, TemperatureIcon, HumidityIcon, PressureIcon, RainHeavyIcon, RainModerateIcon, SunnyIcon },
 	data() {
 		return {
 			temperature: [],
+			heatIndex: [],
 			humidity: [],
 			pressure: [],
 			rain: [],
@@ -129,6 +131,11 @@ export default {
 						}
 					} ],
 				},
+				elements: {
+					point: {
+						radius: 0,
+					},
+				},
 			},
 			rainAmount: {
 				heavy: 'Mucha',
@@ -138,6 +145,21 @@ export default {
 		};
 	},
 	computed: {
+		temperatureDatasets: function() {
+			return [
+				{
+					data: this.temperature,
+					backgroundColor: getColor( 'rgba(0, 0, 0, 0.2)' ),
+				// }, {
+				// 	data: this.heatIndex,
+				// 	borderColor: getColor('rgba(255, 255, 255, 0.3)'),
+				// 	borderWidth: 1,
+				// 	borderCapStyle: 'square',
+				// 	backgroundColor: getColor( 'transparent' ),
+				// 	type: 'line',
+				}
+			];
+		},
 		rainType: function() {
 			if ( this.rainNow > 900 ) {
 				return 'heavy';
@@ -156,7 +178,7 @@ export default {
 		},
 	},
 	async fetch() {
-		const today = new Date(2021, 2, 8);
+		const today = new Date(); // 2021, 2, 8);
 		this.todayLabel = today.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })
 		const todayData = await this.$axios.$get(
 			process.env.apiServer + `data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&Now=true`
@@ -167,12 +189,12 @@ export default {
 		this.rain = [];
 		todayData.forEach( item => {
 			this.temperature[ item.hour_of_day ] = item.temperature;
+			this.heatIndex[ item.hour_of_day ] = item.heatindex;
 			this.humidity[ item.hour_of_day ] = item.humidity;
 			this.pressure[ item.hour_of_day ] = item.pressure;
 			// 10 is minimal value
 			this.rain[ item.hour_of_day ] = 1024 - item.rain; // < 300 keay rain, < 500 moderate rain, else no rain
 		} );
-		console.log(this.rain);
 		this.temperatureNow = ( this.temperature.slice( -1 )[0] || 0).toFixed( 1 );
 		this.humidityNow = ( this.humidity.slice( -1 )[0] || 0).toFixed( 1 );
 		this.pressureNow = ( this.pressure.slice( -1 )[0] || 0).toFixed( 1 );

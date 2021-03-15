@@ -11,7 +11,7 @@ import { CChartBar } from '@coreui/vue-chartjs'
 import { getColor, deepObjectsMerge } from '@coreui/utils/src'
 
 export default {
-	name: 'CChartBarSimple',
+	name: 'CChartBarExpert',
 	components: { CChartBar },
 	props: {
 		...CChartBar.props,
@@ -31,17 +31,22 @@ export default {
 		pointed: Boolean
 	},
 	computed: {
+		extraDatasets() {
+			return {
+				// backgroundColor: getColor(this.backgroundColor),
+				pointHoverBackgroundColor: getColor(this.pointHoverBackgroundColor),
+				label: this.label,
+				barPercentage: 0.5,
+				categoryPercentage: 1,
+			};
+		},
 		defaultDatasets () {
-			return [
-				{
-					data: this.dataPoints,
-					backgroundColor: getColor(this.backgroundColor),
-					pointHoverBackgroundColor: getColor(this.pointHoverBackgroundColor),
-					label: this.label,
-					barPercentage: 0.5,
-					categoryPercentage: 1
-				}
-			]
+			return this.dataPoints.map( item => {
+				return {
+					... item,
+					... this.extraDatasets,
+				};
+			} );
 		},
 		defaultOptions () {
 			return {
