@@ -29,6 +29,10 @@ module.exports = {
 			description: 'Create average',
 			type: 'boolean',
 		},
+		lastdays: {
+			description: 'Current day is the last day',
+			type: 'boolean',
+		},
 	},
 
 
@@ -37,7 +41,7 @@ module.exports = {
 	},
 
 
-	fn: async function ( { day, month, year, average } ) {
+	fn: async function ( { day, month, year, average, lastdays } ) {
 		/**
 		 * Gets the timestamp using the timezone
 		 *
@@ -48,16 +52,27 @@ module.exports = {
 			return date.valueOf() + ( date.utcOffset() * 60 * 1000 );
 		};
 
-		const currentDate = moment([year, month - 1, day]).local(true).hour(0).minutes(0).seconds(0);
-		const startDate = currentDate.clone().weekday(1);
-		const endDate = currentDate.clone().weekday(7);
-		const query = 'select createdAt, WEEKDAY( FROM_UNIXTIME( createdAt / 1000 ) ) as day_of_week, `id`, `temperature`, `humidity`, `pressure` from `data` where `createdAt` >= $1 and `createdAt` <= $2 order by 1';
-		const result = await sails.getDatastore().sendNativeQuery( query, [ getTimestamp( startDate ), getTimestamp( endDate ) ] );
+		// const currentDate = moment([year, month - 1, day]).hour(23).minutes(59).seconds(59);
+		const currentDate = moment.utc( new Date( year, month-1, day, 23, 59, 59 ) );
+		const startDate = lastdays
+			? currentDate.clone().subtract( 7, 'days' )
+			: currentDate.clone().weekday(1);
+		const endDate = lastdays
+			? currentDate.clone()
+			: currentDate.clone().weekday(7);
+		const query = 'select createdAt, `id`, `temperature`, `humidity`, `pressure` from `data` where `createdAt` >= $1 and `createdAt` <= $2 order by 1';
+		const rawResult = await sails.getDatastore().sendNativeQuery( query, [ getTimestamp( startDate ), getTimestamp( endDate ) ] );
+		const result = rawResult.rows.map( item => {
+			const date = new Date( item.createdAt );
+			item[ 'day_of_week' ] = date.getDay();
+			item[ 'day_of_month' ] = date.getDate();
+			return item;
+		} );
 		if ( ! average ) {
-			return result.rows;
+			return result;
 		}
 		let items = {};
-		result.rows
+		rows
 			.forEach( item => {
 				if ( ! items[ item.day_of_week ] ) {
 					items[ item.day_of_week ] = [];

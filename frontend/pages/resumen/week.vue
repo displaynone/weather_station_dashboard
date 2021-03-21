@@ -33,9 +33,10 @@ export default {
 		}
 	},
 	async fetch() {
-		const today = new Date();
+		// const today = new Date();
+		const today = new Date( 2021, 2, 8 );
 		const weekData = await this.$axios.$get(
-			process.env.apiServer + `data/group-by-week?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }`
+			process.env.apiServer + `data/group-by-week?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&lastdays=true`
 		);
 		const defaultValue = {
 			minTemperature: Number.MAX_SAFE_INTEGER,
@@ -49,7 +50,7 @@ export default {
 		const result = [ ... emptyArray ];
 		const numberItemsByDay = new Array( 7 ).fill( 0 );
 		weekData.forEach( item => {
-			const index = item.day_of_week;
+			const index = 6 - ( today.getDate() - item.day_of_month );
 			result[ index ].minTemperature = Math.min( result[ index ].minTemperature, item.temperature );
 			result[ index ].maxTemperature = Math.max( result[ index ].maxTemperature, item.temperature );
 			result[ index ].humidity += item.humidity;
@@ -67,7 +68,6 @@ export default {
 			};
 		} );
 		this.data = result;
-		console.log(result);
 	},
 	fetchOnServer: false,
 };

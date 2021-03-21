@@ -39,7 +39,7 @@ module.exports = {
 
 		const startDate = new Date( year, month - 1, day ).getTime();
 		const endDate = new Date( year, month - 1, day, 23, 59 ).getTime();
-		const query = 'select createdAt, HOUR( FROM_UNIXTIME( createdAt / 1000 ) ) as hour_of_day, `id`, `temperature`, `heatindex`, `humidity`, `pressure`, `rain` from `data` where `createdAt` >= $1 and `createdAt` <= $2 order by 1';
+		const query = 'select createdAt, HOUR( FROM_UNIXTIME( createdAt / 1000 ) ) as hour_of_day, FROM_UNIXTIME( createdAt / 1000 ) date, `id`, `temperature`, `heatindex`, `humidity`, `pressure`, `rain` from `data` where `createdAt` >= $1 and `createdAt` <= $2 order by 1';
 		const result = await sails.getDatastore().sendNativeQuery( query, [ startDate, endDate ] );
 		if ( ! average ) {
 			return result.rows;
