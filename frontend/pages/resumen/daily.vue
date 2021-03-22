@@ -178,8 +178,8 @@ export default {
 		},
 	},
 	async fetch() {
-		// const today = new Date();
-		const today = new Date( 2021, 2, 8 );
+		const today = new Date();
+		// const today = new Date( 2021, 2, 8 );
 		this.todayLabel = today.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })
 		const todayData = await this.$axios.$get(
 			process.env.apiServer + `data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&Now=true`

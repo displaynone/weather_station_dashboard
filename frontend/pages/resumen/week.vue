@@ -33,8 +33,8 @@ export default {
 		}
 	},
 	async fetch() {
-		// const today = new Date();
-		const today = new Date( 2021, 2, 8 );
+		const today = new Date();
+		// const today = new Date( 2021, 2, 8 );
 		const weekData = await this.$axios.$get(
 			process.env.apiServer + `data/group-by-week?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&lastdays=true`
 		);
