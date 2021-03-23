@@ -4,15 +4,18 @@
 		<CRow class="row">
 			<CCol class="col day" v-for="( day, index ) in data" :key="index">
 				<CCard
-					color="primary"
+					:color="day.isToday ? 'primary' : 'secondary'"
 					class="text-center"
 					body-wrapper
 					text-color="white"
 				>
 					<blockquote class="card-blockquote">
-						<div class="h5">{{ day.day }} {{ daysLabels[ index ] }}</div>
-						<div><CIcon :height="10" name="cilCaretTop"/> {{ day.maxTemperature  === Number.MIN_SAFE_INTEGER ? '-' : `${ day.maxTemperature } ºC` }}</div>
-						<div><CIcon :height="10" name="cilCaretBottom"/> {{ day.minTemperature  === Number.MAX_SAFE_INTEGER ? '-' : `${ day.minTemperature } ºC` }}</div>
+						<div class="h3">{{ day.day }}</div>
+						<div class="h6">{{ daysLabels[ day.day_of_week ] }}</div>
+						<div>
+							<span class="normal">{{ day.maxTemperature  === Number.MIN_SAFE_INTEGER ? '-' : `${ day.maxTemperature } º` }}</span>
+							<span class="heat">{{ day.minTemperature  === Number.MAX_SAFE_INTEGER ? '-' : `${ day.minTemperature } º` }}</span>
+						</div>
 					</blockquote>
 				</CCard>
 			</CCol>
@@ -29,12 +32,12 @@ export default {
 	data() {
 		return {
 			data: [],
-			daysLabels: [ 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom' ],
+			daysLabels: [ 'Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb' ],
 		}
 	},
 	async fetch() {
 		const today = new Date();
-		// const today = new Date( 2021, 2, 8 );
+		// const today = new Date( 2021, 2, 23 );
 		const weekData = await this.$axios.$get(
 			process.env.apiServer + `data/group-by-week?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&lastdays=true`
 		);
@@ -44,30 +47,25 @@ export default {
 			humidity: 0,
 			pressure: 0,
 		};
-		const emptyArray = ( new Array( 7 ) ).fill( null ).map( () => {
-			return { ... defaultValue }
-		} );
-		const result = [ ... emptyArray ];
+		const result = [];
 		const numberItemsByDay = new Array( 7 ).fill( 0 );
 		weekData.forEach( item => {
-			const index = 6 - ( today.getDate() - item.day_of_month );
+			const index = item.day_of_month;
+			if ( ! result[ index ] ) {
+				result[ index ] = { ... defaultValue };
+			}
+			result[ index ].index = index;
 			result[ index ].minTemperature = Math.min( result[ index ].minTemperature, item.temperature );
 			result[ index ].maxTemperature = Math.max( result[ index ].maxTemperature, item.temperature );
 			result[ index ].humidity += item.humidity;
 			result[ index ].pressure += item.pressure;
+			result[ index ].day_of_week = item.day_of_week;
 			result[ index ].isToday = today.getDay() === item.day_of_week;
-			result[ index ].day = new Date( item.createdAt ).getDate() + 1;
+			result[ index ].day = new Date( item.createdAt ).getDate();
 			numberItemsByDay[ index ]++;
 		} );
-		result.map( ( item, index ) => {
-			return {
-				maxTemperature: item.maxTemperature,
-				minTemperature: item.minTemperature,
-				humidity: item.humidity / numberItemsByDay[ index ],
-				pressure: item.pressure / numberItemsByDay[ index ],
-			};
-		} );
-		this.data = result;
+		this.data = result.filter( item => item !== null );
+		console.log(JSON.stringify(this.data, null, 2));
 	},
 	fetchOnServer: false,
 };
@@ -88,7 +86,21 @@ export default {
 		}
 	}
 
+	h2 {
+		text-transform: uppercase;
+		padding-bottom: 0.8em;
+		text-align: center;
+	}
+
 	.card-body {
 		padding: 0.25rem;
+	}
+
+	.normal {
+		font-weight: 500;
+	}
+
+	.heat {
+		color: rgba( 255, 255, 255, 0.6 );
 	}
 </style>

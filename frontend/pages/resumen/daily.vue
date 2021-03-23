@@ -139,7 +139,7 @@ export default {
 			},
 			rainAmount: {
 				heavy: 'Mucha',
-				moderate: 'Moderate',
+				moderate: 'Moderada',
 				none: 'Nada',
 			},
 		};
