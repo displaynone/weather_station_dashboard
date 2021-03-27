@@ -124,8 +124,8 @@ export default {
 							display: false,
 						},
 						ticks: {
-							fontColor: 'rgba( 255, 255, 255, 0.5 )',
-							fontSize: 10,
+							fontColor: 'rgba( 255, 255, 255, 0.9 )',
+							fontSize: 11,
 							stepSize: 2,
 							beginAtZero: false,
 						}
@@ -149,7 +149,7 @@ export default {
 			return [
 				{
 					data: this.temperature,
-					backgroundColor: getColor( 'rgba(0, 0, 0, 0.2)' ),
+					backgroundColor: getColor( 'rgba(0, 0, 0, 0.4)' ),
 				// }, {
 				// 	data: this.heatIndex,
 				// 	borderColor: getColor('rgba(255, 255, 255, 0.3)'),

@@ -7,7 +7,7 @@
 					:color="day.isToday ? 'primary' : 'secondary'"
 					class="text-center"
 					body-wrapper
-					text-color="white"
+					:text-color="day.isToday ? 'white' : 'black'"
 				>
 					<blockquote class="card-blockquote">
 						<div class="h3">{{ day.day }}</div>
@@ -20,20 +20,90 @@
 				</CCard>
 			</CCol>
 		</CRow>
+		<CRow class="row">
+			<CCol sm="12" lg="12">
+				<CWidgetDropdown color="info" :header="temperatureNow" text="Temperatura / Humedad">
+					<template #default>
+						<span>
+							<TemperatureIcon class="icon"/>
+							<HumidityIcon class="icon"/>
+						</span>
+					</template>
+					<template #footer>
+						<CChartBarExpert
+							pointed
+							class="mt-3 mx-3"
+							:data-points="temperatureHumidityDatasets"
+							point-hover-background-color="primary"
+							label="ºC"
+							:labels="hoursLabels"
+							style="height: 200px"
+							:options="options"
+						/>
+					</template>
+				</CWidgetDropdown>
+			</CCol>
+		</CRow>
 	</div>
 </template>
 
 <script>
-// import { cilCaretTop } from '@coreui/icons';
+import { TemperatureIcon, HumidityIcon } from '~/components/icons';
+import { CChartBarExpert } from "../charts/index.js";
+import { getColor } from '@coreui/utils/src'
 
 export default {
 	name: "WeekWidgets",
 	// icons: { cilCaretTop },
+	components: { CChartBarExpert, TemperatureIcon, HumidityIcon },
 	data() {
 		return {
 			data: [],
-			daysLabels: [ 'Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb' ],
+			daysLabels: [ 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado' ],
+			temperature: [],
+			humidity: [],
+			options: {
+				scales: {
+					yAxes: [ {
+						display: true,
+						gridLines: {
+							display: false,
+						},
+						ticks: {
+							fontColor: 'rgba( 255, 255, 255, 0.9 )',
+							fontSize: 14,
+							stepSize: 5,
+							beginAtZero: false,
+						}
+					} ],
+				},
+				elements: {
+					point: {
+						radius: 0,
+					},
+				},
+			},
 		}
+	},
+	computed: {
+		temperatureHumidityDatasets: function() {
+			return [
+				{
+					data: this.humidity,
+					borderColor: getColor( 'rgba(255, 255, 255, 0.6)' ),
+					borderWidth: 3,
+					borderCapStyle: 'square',
+					backgroundColor: getColor( 'transparent' ),
+					type: 'line',
+					label: '%',
+					tooltipLabelColor: getColor( 'rgba(255, 255, 255, 0.7)' ),
+				}, {
+					data: this.temperature,
+					backgroundColor: getColor( 'rgba(0, 0, 0, 0.4)' ),
+					tooltipLabelColor: getColor( 'rgba(0, 0, 0, 0.4)' ),
+				},
+			];
+		},
 	},
 	async fetch() {
 		const today = new Date();
@@ -49,6 +119,9 @@ export default {
 		};
 		const result = [];
 		const numberItemsByDay = new Array( 7 ).fill( 0 );
+		let prevHour = -1;
+		let minTemperature = Number.MAX_SAFE_INTEGER;
+		let maxTemperature = Number.MIN_SAFE_INTEGER;
 		weekData.forEach( item => {
 			const index = item.day_of_month;
 			if ( ! result[ index ] ) {
@@ -61,17 +134,27 @@ export default {
 			result[ index ].pressure += item.pressure;
 			result[ index ].day_of_week = item.day_of_week;
 			result[ index ].isToday = today.getDay() === item.day_of_week;
-			result[ index ].day = new Date( item.createdAt ).getDate();
+			const date = new Date( item.createdAt );
+			result[ index ].day = date.getDate();
+			if ( date.getHours() - prevHour > 4 ) {
+				this.temperature.push( item.temperature );
+				this.humidity.push( item.humidity );
+			} else {
+				this.temperature[ this.temperature.length ] = Math.max( item.temperature, this.temperature[ this.temperature.length ] );
+				this.humidity[ this.humidity.length ] = Math.max( item.humidity, this.humidity[ this.humidity.length ] );
+			}
+			minTemperature = Math.min( item.temperature, minTemperature );
+			maxTemperature = Math.max( item.temperature, maxTemperature );
 			numberItemsByDay[ index ]++;
 		} );
+		this.humidity = this.humidity.map( item => ( item * maxTemperature / 100 ) );
+		console.log(this.humidity);
 		this.data = result.filter( item => item !== null );
-		console.log(JSON.stringify(this.data, null, 2));
 	},
 	fetchOnServer: false,
 };
 </script>
-
-<style scoped>
+<style lang="scss" scoped>
 	@media (max-width: 768px) {
 		.day {
 			min-width: calc( 100% / 3);
@@ -98,9 +181,23 @@ export default {
 
 	.normal {
 		font-weight: 500;
+		font-size: 1.2em;
+		padding-right: 0.5em;
 	}
 
 	.heat {
-		color: rgba( 255, 255, 255, 0.6 );
+		color: rgba( 0, 0, 0, 0.6 );
 	}
+
+	.bg-primary {
+		.heat {
+			color: rgba( 255, 255, 255, 0.6 );
+		}
+	}
+
+	.icon {
+		opacity: 0.5;
+		height: 48px;
+	}
+
 </style>

@@ -43,8 +43,8 @@ export default {
 		defaultDatasets () {
 			return this.dataPoints.map( item => {
 				return {
-					... item,
 					... this.extraDatasets,
+					... item,
 				};
 			} );
 		},
