@@ -53,7 +53,7 @@ module.exports = {
 		};
 
 		// const currentDate = moment([year, month - 1, day]).hour(23).minutes(59).seconds(59);
-		const currentDate = moment.utc( new Date( year, month-1, day, 23, 59, 59 ) );
+		const currentDate = moment( new Date( year, month-1, day, 23, 59, 59 ) );
 		const startDate = lastdays
 			? currentDate.clone().subtract( 7, 'days' )
 			: currentDate.clone().weekday(1);

@@ -22,7 +22,7 @@
 		</CRow>
 		<CRow class="row">
 			<CCol sm="12" lg="12">
-				<CWidgetDropdown color="info" :header="temperatureNow" text="Temperatura / Humedad">
+				<CWidgetDropdown color="info" header="Temperatura / Humedad">
 					<template #default>
 						<span>
 							<TemperatureIcon class="icon"/>
@@ -36,7 +36,6 @@
 							:data-points="temperatureHumidityDatasets"
 							point-hover-background-color="primary"
 							label="ºC"
-							:labels="hoursLabels"
 							style="height: 200px"
 							:options="options"
 						/>
@@ -135,6 +134,7 @@ export default {
 			result[ index ].day_of_week = item.day_of_week;
 			result[ index ].isToday = today.getDay() === item.day_of_week;
 			const date = new Date( item.createdAt );
+			date.setHours( 6 );
 			result[ index ].day = date.getDate();
 			if ( date.getHours() - prevHour > 4 ) {
 				this.temperature.push( item.temperature );
@@ -147,8 +147,7 @@ export default {
 			maxTemperature = Math.max( item.temperature, maxTemperature );
 			numberItemsByDay[ index ]++;
 		} );
-		this.humidity = this.humidity.map( item => ( item * maxTemperature / 100 ) );
-		console.log(this.humidity);
+		this.humidity = this.humidity.map( item => ( item * maxTemperature / 100 ).toFixed( 2 ) );
 		this.data = result.filter( item => item !== null );
 	},
 	fetchOnServer: false,
