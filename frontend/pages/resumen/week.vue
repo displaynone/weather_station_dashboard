@@ -123,7 +123,7 @@ export default {
 		let maxTemperature = Number.MIN_SAFE_INTEGER;
 		weekData.forEach( item => {
 			const date = new Date( item.createdAt );
-			const index = date.getDate();
+			const index = parseInt( date.toISOString().split( 'T' )[ 0 ].replace( /-/g, '' ) );
 			if ( ! result[ index ] ) {
 				result[ index ] = { ... defaultValue };
 			}
@@ -132,9 +132,9 @@ export default {
 			result[ index ].maxTemperature = Math.max( result[ index ].maxTemperature, item.temperature );
 			result[ index ].humidity += item.humidity;
 			result[ index ].pressure += item.pressure;
-			result[ index ].day_of_week = item.day_of_week;
-			result[ index ].isToday = today.getDay() === item.day_of_week;
-			result[ index ].day = date.getDate();
+			result[ index ].day_of_week = date.getUTCDay();
+			result[ index ].isToday = today.getUTCDay() === date.getUTCDay();
+			result[ index ].day = date.getUTCDate();
 			if ( date.getHours() - prevHour > 4 ) {
 				this.temperature.push( item.temperature );
 				this.humidity.push( item.humidity );
