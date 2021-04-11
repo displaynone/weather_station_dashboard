@@ -15,7 +15,7 @@
 							label="ºC"
 							:labels="hoursLabels"
 							style="height: 50px"
-							:options="options"
+							:options="optionsTemperature"
 						/>
 					</template>
 				</CWidgetDropdown>
@@ -34,7 +34,7 @@
 							label="%"
 							:labels="hoursLabels"
 							style="height: 50px"
-							:options="options"
+							:options="optionsHumidity"
 						/>
 					</template>
 				</CWidgetDropdown>
@@ -53,7 +53,7 @@
 							label="hPa"
 							:labels="hoursLabels"
 							style="height: 50px"
-							:options="options"
+							:options="optionsPressure"
 						/>
 					</template>
 				</CWidgetDropdown>
@@ -114,6 +114,10 @@ export default {
 			humidityNow: '0',
 			pressureNow: '0',
 			rainNow: '0',
+			minTemperature: Number.MAX_SAFE_INTEGER,
+			minHumidity: Number.MAX_SAFE_INTEGER,
+			minPressure: Number.MAX_SAFE_INTEGER,
+			minRain: Number.MAX_SAFE_INTEGER,
 			hoursLabels: new Array(24).fill(0).map( (value, index ) => `${ index > 10 ? '': '0' }${ index }h`),
 			todayLabel: '',
 			options: {
@@ -128,7 +132,7 @@ export default {
 							fontSize: 11,
 							stepSize: 2,
 							beginAtZero: false,
-						}
+						},
 					} ],
 				},
 				elements: {
@@ -149,14 +153,7 @@ export default {
 			return [
 				{
 					data: this.temperature,
-					backgroundColor: getColor( 'rgba(0, 0, 0, 0.4)' ),
-				// }, {
-				// 	data: this.heatIndex,
-				// 	borderColor: getColor('rgba(255, 255, 255, 0.3)'),
-				// 	borderWidth: 1,
-				// 	borderCapStyle: 'square',
-				// 	backgroundColor: getColor( 'transparent' ),
-				// 	type: 'line',
+					backgroundColor: getColor( 'rgba(0, 0, 0, 1)' ),
 				}
 			];
 		},
@@ -175,6 +172,24 @@ export default {
 				return 'Moderada';
 			}
 			return 'Nada';
+		},
+		optionsTemperature: function() {
+			const options = JSON.parse( JSON.stringify( this.options ) );
+			const min = 2 * Math.round( ( this.minTemperature - options.scales.yAxes[ 0 ].ticks.stepSize ) / 2 );
+			options.scales.yAxes[ 0 ].ticks.min = min === Number.MAX_SAFE_INTEGER - 1 ? 0 : min;
+			return options;
+		},
+		optionsPressure: function() {
+			const options = JSON.parse( JSON.stringify( this.options ) );
+			const min = 2 * Math.round( ( this.minPressure - options.scales.yAxes[ 0 ].ticks.stepSize ) / 2 );
+			options.scales.yAxes[ 0 ].ticks.min = min === Number.MAX_SAFE_INTEGER - 1 ? 0 : min;
+			return options;
+		},
+		optionsHumidity: function() {
+			const options = JSON.parse( JSON.stringify( this.options ) );
+			const min = 2 * Math.round( ( this.minHumidity - options.scales.yAxes[ 0 ].ticks.stepSize ) / 2 );
+			options.scales.yAxes[ 0 ].ticks.min = min === Number.MAX_SAFE_INTEGER - 1 ? 0 : min;
+			return options;
 		},
 	},
 	async fetch() {
@@ -195,6 +210,9 @@ export default {
 			this.pressure[ item.hour_of_day ] = item.pressure;
 			// 10 is minimal value
 			this.rain[ item.hour_of_day ] = 1024 - item.rain; // < 300 keay rain, < 500 moderate rain, else no rain
+			this.minTemperature = Math.min( this.minTemperature, item.temperature );
+			this.minHumidity = Math.min( this.minHumidity, item.humidity );
+			this.minPressure = Math.min( this.minPressure, item.pressure );
 		} );
 		this.temperatureNow = ( this.temperature.slice( -1 )[0] || 0).toFixed( 1 );
 		this.humidityNow = ( this.humidity.slice( -1 )[0] || 0).toFixed( 1 );

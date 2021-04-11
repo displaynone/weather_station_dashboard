@@ -56,9 +56,11 @@ export default {
 				},
 				scales: {
 					xAxes: [{
-						display: false
+						display: false,
 					}],
 					yAxes: [{
+						display: false
+					},{
 						display: false
 					}]
 				},
@@ -69,7 +71,7 @@ export default {
 			return deepObjectsMerge(this.defaultDatasets, this.datasets || {})
 		},
 		computedOptions () {
-			return deepObjectsMerge(this.defaultOptions, this.options || {})
+			return deepObjectsMerge(this.defaultOptions, JSON.parse( JSON.stringify( this.options ) ) || {})
 		}
 	}
 }

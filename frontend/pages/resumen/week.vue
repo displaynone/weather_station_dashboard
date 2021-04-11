@@ -33,11 +33,12 @@
 						<CChartBarExpert
 							pointed
 							class="mt-3 mx-3"
-							:data-points="temperatureHumidityDatasets"
+							:data-points="temperaturePressureDatasets"
 							point-hover-background-color="primary"
 							label="ºC"
 							style="height: 200px"
 							:options="options"
+							:labels="labels"
 						/>
 					</template>
 				</CWidgetDropdown>
@@ -51,6 +52,19 @@ import { TemperatureIcon, HumidityIcon } from '~/components/icons';
 import { CChartBarExpert } from "../charts/index.js";
 import { getColor } from '@coreui/utils/src'
 
+const yAxes = {
+	display: true,
+	gridLines: {
+		display: false,
+	},
+	ticks: {
+		fontColor: 'rgba( 255, 255, 255, 0.9 )',
+		fontSize: 14,
+		stepSize: 2,
+		beginAtZero: false,
+	}
+};
+
 export default {
 	name: "WeekWidgets",
 	// icons: { cilCaretTop },
@@ -60,21 +74,32 @@ export default {
 			data: [],
 			daysLabels: [ 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado' ],
 			temperature: [],
-			humidity: [],
+			pressure: [],
+			labels: [],
 			options: {
 				scales: {
-					yAxes: [ {
-						display: true,
-						gridLines: {
-							display: false,
+					yAxes: [
+						{
+							id: 'pressure',
+							... yAxes,
+							position: 'right',
 						},
-						ticks: {
-							fontColor: 'rgba( 255, 255, 255, 0.9 )',
-							fontSize: 14,
-							stepSize: 5,
-							beginAtZero: false,
-						}
-					} ],
+						{
+							id: 'temperature',
+							... yAxes,
+						},
+					],
+					xAxes: [
+						{
+							display: true,
+							ticks: {
+								fontColor: 'rgba( 255, 255, 255, 0.9 )',
+								fontSize: 14,
+								stepSize: 2,
+								beginAtZero: false,
+							},
+						},
+					],
 				},
 				elements: {
 					point: {
@@ -85,21 +110,26 @@ export default {
 		}
 	},
 	computed: {
-		temperatureHumidityDatasets: function() {
+		temperaturePressureDatasets: function() {
 			return [
 				{
-					data: this.humidity,
-					borderColor: getColor( 'rgba(255, 255, 255, 0.6)' ),
-					borderWidth: 3,
+					yAxisID: 'pressure',
+					data: this.pressure,
+					borderColor: getColor( 'rgba(255, 255, 255, 0.7)' ),
+					borderWidth: 2,
 					borderCapStyle: 'square',
 					backgroundColor: getColor( 'transparent' ),
 					type: 'line',
-					label: '%',
+					label: 'hPa',
 					tooltipLabelColor: getColor( 'rgba(255, 255, 255, 0.7)' ),
 				}, {
+					yAxisID: 'temperature',
 					data: this.temperature,
-					backgroundColor: getColor( 'rgba(0, 0, 0, 0.4)' ),
-					tooltipLabelColor: getColor( 'rgba(0, 0, 0, 0.4)' ),
+					type: 'line',
+					borderColor: getColor( 'rgba(0, 0, 0, 0.7)' ),
+					borderWidth: 2,
+					backgroundColor: getColor( 'transparent' ),
+					tooltipLabelColor: getColor( 'rgba(0, 0, 0, 0.7)' ),
 				},
 			];
 		},
@@ -121,6 +151,7 @@ export default {
 		let prevHour = -1;
 		let minTemperature = Number.MAX_SAFE_INTEGER;
 		let maxTemperature = Number.MIN_SAFE_INTEGER;
+		let prevLabel = '';
 		weekData.forEach( item => {
 			const date = new Date( item.createdAt );
 			const index = parseInt( date.toISOString().split( 'T' )[ 0 ].replace( /-/g, '' ) );
@@ -137,16 +168,20 @@ export default {
 			result[ index ].day = date.getUTCDate();
 			if ( date.getHours() - prevHour > 4 ) {
 				this.temperature.push( item.temperature );
-				this.humidity.push( item.humidity );
+				this.pressure.push( item.pressure );
+				if ( prevLabel !== this.daysLabels[ date.getUTCDay() ] ) {
+					this.labels.push( this.daysLabels[ date.getUTCDay() ] );
+				} else {
+					this.labels.push( '' );
+				}
+				prevLabel = this.daysLabels[ date.getUTCDay() ];
 			} else {
 				this.temperature[ this.temperature.length ] = Math.max( item.temperature, this.temperature[ this.temperature.length ] );
-				this.humidity[ this.humidity.length ] = Math.max( item.humidity, this.humidity[ this.humidity.length ] );
 			}
 			minTemperature = Math.min( item.temperature, minTemperature );
 			maxTemperature = Math.max( item.temperature, maxTemperature );
 			numberItemsByDay[ index ]++;
 		} );
-		this.humidity = this.humidity.map( item => ( item * maxTemperature / 100 ).toFixed( 2 ) );
 		this.data = result.filter( item => item !== null );
 	},
 	fetchOnServer: false,
