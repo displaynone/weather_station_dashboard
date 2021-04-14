@@ -22,11 +22,11 @@
 		</CRow>
 		<CRow class="row">
 			<CCol sm="12" lg="12">
-				<CWidgetDropdown color="info" header="Temperatura / Humedad">
+				<CWidgetDropdown color="info" header="Temperatura / Presión">
 					<template #default>
 						<span>
 							<TemperatureIcon class="icon"/>
-							<HumidityIcon class="icon"/>
+							<PressureIcon class="icon"/>
 						</span>
 					</template>
 					<template #footer>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { TemperatureIcon, HumidityIcon } from '~/components/icons';
+import { TemperatureIcon, PressureIcon } from '~/components/icons';
 import { CChartBarExpert } from "../charts/index.js";
 import { getColor } from '@coreui/utils/src'
 
@@ -68,7 +68,7 @@ const yAxes = {
 export default {
 	name: "WeekWidgets",
 	// icons: { cilCaretTop },
-	components: { CChartBarExpert, TemperatureIcon, HumidityIcon },
+	components: { CChartBarExpert, TemperatureIcon, PressureIcon },
 	data() {
 		return {
 			data: [],
