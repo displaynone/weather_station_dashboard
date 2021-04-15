@@ -86,26 +86,17 @@ module.exports = {
 			} );
 		items = Object.values( items )
 			.map( item => {
-
-				const average = item
+				return item
 					.reduce( ( itemA, itemB ) => {
 						return {
 							... itemA,
-							temperature: itemA.temperature + itemB.temperature,
-							humidity: itemA.humidity + itemB.humidity,
-							pressure: itemA.pressure + itemB.pressure,
-							heatindex: itemA.heatindex + itemB.heatindex,
-							rain: itemA.rain + itemB.rain,
+							temperature: Math.max( itemA.temperature, itemB.temperature ),
+							humidity: Math.max( itemA.humidity, itemB.humidity ),
+							pressure: Math.max( itemA.pressure, itemB.pressure ),
+							heatindex: Math.max( itemA.heatindex, itemB.heatindex ),
+							rain: Math.max( itemA.rain, itemB.rain ),
 						};
 					} );
-				return {
-					... average,
-					temperature: average.temperature / item.length,
-					humidity: average.humidity / item.length,
-					pressure: average.pressure / item.length,
-					heatindex: average.heatindex / item.length,
-					rain: average.rain / item.length,
-				};
 			} );
 		return items;
 	}
