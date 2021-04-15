@@ -195,22 +195,24 @@ export default {
 	async fetch() {
 		const today = new Date();
 		// const today = new Date( 2021, 2, 8 );
-		const timeDiff = ( new Date().getTimezoneOffset() ) / -60;
+		const timeDiff = new Date().getTimezoneOffset();
 		this.todayLabel = today.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })
 		const todayData = await this.$axios.$get(
 			process.env.apiServer + `data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&Now=true&timediff=${ timeDiff }`
+			// `/data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&Now=true&timediff=${ timeDiff }`
 		);
 		this.temperature = [];
 		this.humidity = [];
 		this.pressure = [];
 		this.rain = [];
 		todayData.forEach( item => {
-			this.temperature[ item.hour_of_day ] = item.temperature;
-			this.heatIndex[ item.hour_of_day ] = item.heatindex;
-			this.humidity[ item.hour_of_day ] = item.humidity;
-			this.pressure[ item.hour_of_day ] = item.pressure;
+			const hourOfDay = item.hour_of_day - ( ( timeDiff / 60 ) % 24 );
+			this.temperature[ hourOfDay] = item.temperature;
+			this.heatIndex[ hourOfDay] = item.heatindex;
+			this.humidity[ hourOfDay] = item.humidity;
+			this.pressure[ hourOfDay] = item.pressure;
 			// 10 is minimal value
-			this.rain[ item.hour_of_day ] = 1024 - item.rain; // < 300 keay rain, < 500 moderate rain, else no rain
+			this.rain[ hourOfDay] = 1024 - item.rain; // < 300 keay rain, < 500 moderate rain, else no rain
 			this.minTemperature = Math.min( this.minTemperature, item.temperature );
 			this.minHumidity = Math.min( this.minHumidity, item.humidity );
 			this.minPressure = Math.min( this.minPressure, item.pressure );

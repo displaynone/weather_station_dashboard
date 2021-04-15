@@ -54,12 +54,19 @@ module.exports = {
 		'@nuxtjs/axios',
 		'@nuxtjs/pwa',
 		'@nuxtjs/axios',
+		'@nuxtjs/proxy',
 	],
 	/*
 	 ** Axios module configuration
 	 ** See https://axios.nuxtjs.org/options
 	 */
-	axios: {},
+	axios: {
+		// proxy: true,
+		// debug: true,
+	},
+	// proxy: [
+	// 	'https://api.matildepascualllopis.com/data/',
+	// ],
 	/*
 	 ** Build configuration
 	 */
