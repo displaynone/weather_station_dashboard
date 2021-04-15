@@ -20,36 +20,10 @@
 				</CCard>
 			</CCol>
 		</CRow>
-		<CRow class="row">
-			<CCol sm="12" lg="12">
-				<CWidgetDropdown color="info" header="Temperatura / Presión">
-					<template #default>
-						<span>
-							<TemperatureIcon class="icon"/>
-							<PressureIcon class="icon"/>
-						</span>
-					</template>
-					<template #footer>
-						<CChartBarExpert
-							pointed
-							class="mt-3 mx-3"
-							:data-points="temperaturePressureDatasets"
-							point-hover-background-color="primary"
-							label="ºC"
-							style="height: 200px"
-							:options="options"
-							:labels="labels"
-						/>
-					</template>
-				</CWidgetDropdown>
-			</CCol>
-		</CRow>
 	</div>
 </template>
 
 <script>
-import { TemperatureIcon, PressureIcon } from '~/components/icons';
-import { CChartBarExpert } from "../charts/index.js";
 import { getColor } from '@coreui/utils/src'
 
 const yAxes = {
@@ -68,7 +42,6 @@ const yAxes = {
 export default {
 	name: "WeekWidgets",
 	// icons: { cilCaretTop },
-	components: { CChartBarExpert, TemperatureIcon, PressureIcon },
 	data() {
 		return {
 			data: [],

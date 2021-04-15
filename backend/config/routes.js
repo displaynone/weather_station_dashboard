@@ -13,5 +13,6 @@ module.exports.routes = {
 	'GET /data/group-by-day': 'DataController.group-by-day',
 	'GET /data/group-by-week': 'DataController.group-by-week',
 	'GET /data/group-by-month': 'DataController.group-by-month',
+	'GET /data/group-by-period': 'DataController.group-by-period',
 
 };

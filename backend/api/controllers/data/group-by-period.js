@@ -3,7 +3,7 @@ const moment = require( 'moment' );
 module.exports = {
 
 
-	friendlyName: 'Data by week',
+	friendlyName: 'Data by period',
 
 
 	description: 'Data grouped by week.',
@@ -25,6 +25,11 @@ module.exports = {
 			type: 'number',
 			required: true,
 		},
+		offset: {
+			description: 'Number of days',
+			type: 'number',
+			required: true,
+		},
 		average: {
 			description: 'Create average',
 			type: 'boolean',
@@ -41,7 +46,7 @@ module.exports = {
 	},
 
 
-	fn: async function ( { day, month, year, average, lastdays } ) {
+	fn: async function ( { day, month, year, average, lastdays, offset } ) {
 		/**
 		 * Gets the timestamp using the timezone
 		 *
@@ -55,7 +60,7 @@ module.exports = {
 		// const currentDate = moment([year, month - 1, day]).hour(23).minutes(59).seconds(59);
 		const currentDate = moment( new Date( year, month-1, day, 23, 59, 59 ) );
 		const startDate = lastdays
-			? currentDate.clone().subtract( 7, 'days' )
+			? currentDate.clone().subtract( offset, 'days' )
 			: currentDate.clone().weekday(1);
 		const endDate = lastdays
 			? currentDate.clone()
@@ -74,10 +79,10 @@ module.exports = {
 		let items = {};
 		rawResult.rows
 			.forEach( item => {
-				if ( ! items[ item.day_of_week ] ) {
-					items[ item.day_of_week ] = [];
+				if ( ! items[ item.day_of_month ] ) {
+					items[ item.day_of_month ] = [];
 				}
-				items[ item.day_of_week ].push( { ... item } );
+				items[ item.day_of_month ].push( { ... item } );
 			} );
 		items = Object.values( items )
 			.map( item => {
