@@ -206,7 +206,7 @@ export default {
 		this.pressure = [];
 		this.rain = [];
 		todayData.forEach( item => {
-			const hourOfDay = item.hour_of_day - ( ( timeDiff / 60 ) % 24 );
+			const hourOfDay = ( item.hour_of_day - ( timeDiff / 60 ) ) % 24;
 			this.temperature[ hourOfDay] = item.temperature;
 			this.heatIndex[ hourOfDay] = item.heatindex;
 			this.humidity[ hourOfDay] = item.humidity;
