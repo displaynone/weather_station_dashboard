@@ -64,12 +64,12 @@ export default {
 					yAxes: [
 						{
 							id: 'pressure',
-							... yAxes( 'rgba( 0, 0, 0, 0.9 )' ),
+							... yAxes(),
 							position: 'right',
 						},
 						{
 							id: 'temperature',
-							... yAxes(),
+							... yAxes( 'rgba( 0, 0, 0, 0.9 )' ),
 						},
 					],
 					xAxes: [
@@ -123,6 +123,7 @@ export default {
 		const today = new Date();
 		// const today = new Date( 2021, 2, 23 );
 		const rawData = await this.$axios.$get(
+			// `/data/group-by-period?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&lastdays=true&average=true&offset=${ numberOfDays }`
 			process.env.apiServer + `data/group-by-period?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&lastdays=true&average=true&offset=${ numberOfDays }`
 		);
 		rawData.forEach( item => {
