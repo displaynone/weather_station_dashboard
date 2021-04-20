@@ -1,0 +1,20 @@
+{
+  "name": "weather-telegram-bot",
+  "version": "1.0.0",
+  "description": "Handles communication with weather station using Telegram",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "telegram",
+    "arduino"
+  ],
+  "author": "Luis Sacristán <displaynone@gmail.com> (https://sentidoweb.com)",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^8.2.0",
+    "telegraf": "^4.3.0"
+  }
+}
