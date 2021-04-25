@@ -63,6 +63,7 @@
 					<template #default>
 						<RainHeavyIcon class="icon" v-if="rainType === 'heavy'"/>
 						<RainModerateIcon class="icon" v-if="rainType === 'moderate'"/>
+						<RainModerateIcon class="icon" v-if="rainType === 'minimun'"/>
 						<SunnyIcon class="icon" v-if="rainType === 'none'"/>
 					</template>
 					<template #footer>
@@ -144,6 +145,7 @@ export default {
 			rainAmount: {
 				heavy: 'Mucha',
 				moderate: 'Moderada',
+				minimun: 'Poca',
 				none: 'Nada',
 			},
 		};
@@ -153,7 +155,7 @@ export default {
 			return [
 				{
 					data: this.temperature,
-					backgroundColor: getColor( 'rgba(0, 0, 0, 1)' ),
+					backgroundColor: getColor( 'rgba(255, 255, 255, 1)' ),
 				}
 			];
 		},
@@ -162,6 +164,8 @@ export default {
 				return 'heavy';
 			} else if ( this.rainNow > 700 ) {
 				return 'moderate';
+			} else if ( this.rainNow > 200 ) {
+				return 'minimun';
 			}
 			return 'none';
 		},
@@ -170,6 +174,8 @@ export default {
 				return 'Mucha';
 			} else if ( this.rainNow > 700 ) {
 				return 'Moderada';
+			} else if ( this.rainNow > 200 ) {
+				return 'Poca';
 			}
 			return 'Nada';
 		},
