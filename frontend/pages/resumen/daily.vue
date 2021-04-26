@@ -146,10 +146,10 @@ export default {
 				},
 			},
 			rainAmount: {
-				heavy: 'Mucha',
+				heavy: 'Fuerte',
 				moderate: 'Moderada',
-				minimun: 'Poca',
-				none: 'Nada',
+				minimun: 'Ligera',
+				none: 'Sin lluvia',
 			},
 		};
 	},
