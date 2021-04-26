@@ -35,6 +35,7 @@
 							:labels="hoursLabels"
 							style="height: 50px"
 							:options="optionsHumidity"
+							backgroundColor="rgb(255, 255, 255)"
 						/>
 					</template>
 				</CWidgetDropdown>
@@ -54,6 +55,7 @@
 							:labels="hoursLabels"
 							style="height: 50px"
 							:options="optionsPressure"
+							backgroundColor="rgb(255, 255, 255)"
 						/>
 					</template>
 				</CWidgetDropdown>
@@ -88,6 +90,7 @@
 									} ],
 								},
 							}"
+							backgroundColor="rgb(255, 255, 255)"
 						/>
 					</template>
 				</CWidgetDropdown>
@@ -171,13 +174,13 @@ export default {
 		},
 		rainIcon: function() {
 			if ( this.rainNow > 900 ) {
-				return 'Mucha';
+				return 'Fuerte';
 			} else if ( this.rainNow > 700 ) {
 				return 'Moderada';
 			} else if ( this.rainNow > 200 ) {
-				return 'Poca';
+				return 'Ligera';
 			}
-			return 'Nada';
+			return 'Sin lluvia';
 		},
 		optionsTemperature: function() {
 			const options = JSON.parse( JSON.stringify( this.options ) );
@@ -247,7 +250,6 @@ export default {
 	}
 
 	.icon {
-		opacity: 0.5;
 		height: 48px;
 	}
 </style>
