@@ -207,7 +207,7 @@ export default {
 		const timeDiff = new Date().getTimezoneOffset();
 		this.todayLabel = today.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })
 		const todayData = await this.$axios.$get(
-			process.env.apiServer + `data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&Now=true&timediff=${ timeDiff }`
+			process.env.apiServer + `data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&Now=true&max=true&timediff=${ timeDiff }`
 			// `/data/group-by-day?day=${ today.getDate() }&month=${ today.getMonth() + 1 }&year=${ today.getFullYear() }&Now=true&timediff=${ timeDiff }`
 		);
 		this.temperature = [];
