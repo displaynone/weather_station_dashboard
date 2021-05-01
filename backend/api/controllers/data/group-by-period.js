@@ -77,12 +77,14 @@ module.exports = {
 			return result;
 		}
 		let items = {};
+
 		rawResult.rows
 			.forEach( item => {
-				if ( ! items[ item.day_of_month ] ) {
-					items[ item.day_of_month ] = [];
+				const index = parseInt( new Date( item.createdAt ).toISOString().split( 'T' )[ 0 ].replace( /-/g, '' ) );
+				if ( ! items[ index ] ) {
+					items[ index ] = [];
 				}
-				items[ item.day_of_month ].push( { ... item } );
+				items[ index ].push( { ... item } );
 			} );
 		items = Object.values( items )
 			.map( item => {
